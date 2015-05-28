@@ -14,7 +14,7 @@ Get a clean state and gems installed:
 make clean
 ```
 
-Generate some tex from and edn file:
+Generate some tex from an edn file:
 
 ```bash
 ./fortitudo.rb -c gzcl-introplus.edn
