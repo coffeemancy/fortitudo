@@ -1,0 +1,54 @@
+{:exercises
+ ;; exercises in 'typical' ranges,
+ ;; e.g. 1, 5, 8-12, 15-30, depending on exercise
+ {"band chin-ups"                   :B
+  "band face pulls"                 :B
+  "band good mornings"              :G
+  "band push downs"                 :B
+  "chest flyes"                     [23 :ea]
+  "db rows"                         53
+  "front squats"                    185
+  "high-bar rear lunge"             120
+  "incline close-grip bench press"  135
+  "incline hammer curls"            [18 :ea]
+  "lean-over shrug"                 185
+  "low-bar squats"                  360
+  "lying leg curls"                 35
+  "pause bench press"               200
+  "snatch-grip BTN press"           90
+  "stiff-leg deadlift"              185
+  "sumo deadlifts"                  395
+  "supinated bent-over row"         135}
+
+ :exermap
+ ;; exercise mappings
+ {:primary
+  {:bench     "pause bench press"
+   :deadlift  "sumo deadlifts"
+   :squat     "low-bar squats"}
+  :assistance
+  {:press  ["snatch-grip BTN press"
+            "incline close-grip bench press"]
+   :pull   ["stiff-leg deadlift"
+            "lean-over shrug"]
+   :row    ["db rows"
+            "supinated bent-over row"]
+   :squat  ["high-bar rear lunge"
+            "front squats"]
+   :vpull  ["band chin-ups"]}
+  :accessory
+  {:biceps   ["incline hammer curls"]
+   :chest    ["chest flyes"]
+   :glutes   ["band good mornings"]
+   :hams     ["lying leg curls"]
+   :rdelts   ["band face pulls"]
+   :triceps  ["band push downs"]}}
+
+ :exermethods
+ ;; map primary exercise to method to call
+ [[:squat    :squat]
+  [:bench    :bench]
+  [:deadlift :deadlift]]
+
+ :program_module "GZCLIntroPlus"
+ :program_name   "GZCL Intro+"}
