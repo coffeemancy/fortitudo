@@ -1,0 +1,76 @@
+\documentclass[english]{article}
+
+<%
+extend Fortitudo
+extend program_module
+
+pr        = prproc(exercises, bands)
+exrxs     = exermethods.
+  flat_map { |exrx, meth| [exrx, send(meth, pr, exermap)] } %>
+\renewcommand{\ttdefault}{cmtt}
+\usepackage[T1]{fontenc}
+\usepackage[latin9]{inputenc}
+\usepackage{array}
+\usepackage{caption}
+\usepackage{multirow}
+\usepackage{tabu}
+
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+\usepackage{babel}
+\usepackage[a4paper, landscape, margin=0.5in]{geometry}
+
+\begin{document}
+<% 4.times.each do |week| %>
+\begin{table}[!htb]
+\caption*{\textbf{<%= program_name %>-- week <%= week+1 %>}}
+\centering
+<% exrxs.each_slice(2).each_with_index do |(exrxkey, workweek), day|
+     work    = workweek[week]
+     exrx    = exermap[:primary][exrxkey] %>
+\begin{minipage}[t]{0.33\linewidth}
+\begin{tabular}[t]{c|c|c|l}
+\hline
+\multicolumn{4}{c}{
+\textbf{day <%= day+1 %> -- <%= exrx %>}}\tabularnewline
+\hline
+\hline
+<% no_mod = 1
+   each_work(work) do |tier, assts, no, newtier, newexrx|
+     arows  = assts.count
+     trows  = tiercount(tier, work.each_slice(2))
+     unless newexrx
+         no_mod = no_mod - 1
+     end
+     exno = no + no_mod %>
+<% if newtier %>
+  <% if newexrx && no > 0 %>\cline{1-3}
+  <% else %><% if no > 0 %>\cline{3-3}<% end %>
+  <% end %>
+<% else %>
+  <% if newexrx && no > 0 %>\cline{1-2}<% end %>
+<% end %>
+<%   assts.each_with_index do |(asst, srl), index| %>
+<% if index.zero? %>\multirow{<%= arows %>}{*}{<%
+    if newexrx %><%= exno %><% end %>}<% end %>
+  & <% if newexrx %><%= asst %><% end %>
+  & <% if index.zero? && newtier %>
+\multirow{<%= trows %>}{*}{<%= tier %>}
+<% end %>
+<%= setrepload[srl] %>
+<% if newexrx && no > 0 %>
+   \cline{2-2}
+<% end %>
+   \cline{4-4}
+<% end %>
+  <% if newexrx && no > 0 %>\cline{1-1}<% end %>
+<% end %>
+\hline
+%\multicolumn{4}{c}{}\tabularnewline
+\end{tabular}
+\end{minipage}
+<% end %>
+\end{table}
+<% end %>
+\end{document}
