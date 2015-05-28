@@ -92,6 +92,7 @@ if __FILE__ == $PROGRAM_NAME
   binds[:program_name] ||= 'GZCL Regular'
   binds[:program_module] =
     case binds.fetch(:program_module, nil)
+    when 'GZCLIntro'     then Fortitudo::Programs::GZCLIntro
     when 'GZCLIntroPlus' then Fortitudo::Programs::GZCLIntroPlus
     else Fortitudo::Programs::GZCLRegular
     end

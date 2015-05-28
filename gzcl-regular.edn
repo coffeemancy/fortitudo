@@ -35,7 +35,8 @@
    :pull      ["stiff-leg deadlift"]
    :row       ["db rows"
                "supinated bent-over row"]
-   :squat     ["front squats"]
+   :squat     ["high-bar rear lunge"
+               "front squats"]
    :vpull     ["band chin-ups"]}
   :accessory
   {:biceps   ["incline hammer curls"]
@@ -51,7 +52,8 @@
  [[:squat    :squat]
   [:bench    :bench]
   [:deadlift :deadlift]
-  [:press    :press]]
+  ;[:press    :press]
+  [:squat    :squat2]]
 
  :program_module "GZCLRegular"
  :program_name   "GZCL Regular"}

@@ -12,19 +12,23 @@ module Fortitudo
     end
 
     def exerproc(pr)
+      nsorindex = proc do |item, wk|
+        case item
+        when Numeric, String then item
+        else item[wk]
+        end
+      end
+
       # builds up a proc which takes a week, using pr proc
       proc do |ex, sets, reps, ld = nil|
         # returns a proc which takes a week and returns
         # the [exercise, [sets, reps, load]]
         proc do |wk|
           exc = ex.is_a?(String) ? ex : ex[wk]
-          sts = sets.is_a?(Numeric) ? sets : sets[wk]
-          rps = case reps
-                when Numeric, String then reps
-                else reps[wk]
-                end
+          sts = nsorindex[sets, wk]
+          rps = nsorindex[reps, wk]
           lod = ld.nil? ? pr[exc] : ld[exc, wk]
-          [exc, [sts, rps, lod]]
+          sts.is_a?(Numeric) && sts.zero? ? nil : [exc, [sts, rps, lod]]
         end
       end
     end
@@ -47,7 +51,12 @@ module Fortitudo
           ladr = srladder.reduce([[], 0]) do |(arr, index), (sets, reps)|
             [arr + [exp[exrx, sets, reps, inp[index]]], index+1]
           end.first
-          ->(w) { 3.times.reduce([]) { |a, e| a + [:T1, [ladr[e][w]]] } }
+          proc do |w|
+            3.times.reduce([]) do |a, e|
+              ex = ladr[e][w]
+              ex.nil? ? a :a + [:T1, [ex]]
+            end
+          end
         end
       end
     end
@@ -62,46 +71,110 @@ module Fortitudo
       end
     end
 
-    module GZCLIntroPlus
-      module_function
+    module GZCLIntro
+      include Programs
 
-      def bands
-        Programs.bands
-      end
+      module_function
 
       def exerproc(pr)
         Programs.exerproc(pr)
       end
 
       def intensityproc(pr)
+        Programs.intensityproc(Rational(8, 10))[pr]
+      end
+
+      def intensity(pr, exrx)
+        srladder = [[[3, 3, 3, 1], 3], [[0, 0, 0, 2], 2], [[0, 0, 0, 3], 1]]
+        Programs.
+          intensity_weeks(exerproc(pr), intensityproc(pr))[srladder][exrx]
+      end
+
+      def squat(pr, exercises)
+        accessory  = exercises[:accessory]
+        assistance = exercises[:assistance]
+        primary    = exercises[:primary]
+        exp        = exerproc(pr)
+
+        intns  = intensity(pr, primary[:squat])
+
+        lunges = exp[assistance[:squat][0], 4, 5]
+        asst   = ->(w) { [:T2, [lunges[w]]] }
+
+        pushup = exp[assistance[:push][0],  5, 10]
+        quads  = exp[accessory[:quads][0],  3, 10]
+        vpull  = exp[assistance[:vpull][0], [2, 3, 4, 3], '1-2',
+                     ->(e, w) { pr[e, 1] }]
+        accs   = ->(w) { [:T3, [pushup[w], quads[w], vpull[w]]] }
+
+        4.times.map { |w| intns[w] + asst[w] + accs[w] }
+      end
+
+      def bench(pr, exercises)
+        accessory  = exercises[:accessory]
+        assistance = exercises[:assistance]
+        primary    = exercises[:primary]
+        exp        = exerproc(pr)
+
+        intns   = intensity(pr, primary[:bench])
+
+        press   = exp[assistance[:press][0],  4, 5]
+        asst    = ->(w) { [:T2, [press[w]]] }
+
+        biceps  = exp[accessory[:biceps][0],  4, 12]
+        rdelts  = exp[accessory[:rdelts][0],  2, '15-30']
+        row     = exp[assistance[:row][0],    3, '10ea']
+        triceps = exp[accessory[:triceps][0], 4, '15-30']
+        accs    = proc do |w|
+          [:T3, [row[w], triceps[w]], :T3, [biceps[w], rdelts[w]]]
+        end
+
+        4.times.map { |w| intns[w] + asst[w] + accs[w] }
+      end
+
+      def deadlift(pr, exercises)
+        accessory  = exercises[:accessory]
+        assistance = exercises[:assistance]
+        primary    = exercises[:primary]
+        exp        = exerproc(pr)
+
+        intns   = intensity(pr, primary[:deadlift])
+
+        fsquat  = exp[assistance[:squat][1], 4, 5, ->(e, w) { pr[e, 5 * w ] }]
+        asst    = ->(w) { [:T2, [fsquat[w]]] }
+
+        pushup  = exp[assistance[:push][0], 5, 10]
+        hams    = exp[accessory[:hams][0],  3, '10ea']
+        vpull   = exp[assistance[:vpull][1], ->(w) { 2 + w }, '2-4']
+        accs    = ->(w) { [:T3, [pushup[w], hams[w], vpull[w]]] }
+
+        4.times.map { |w| intns[w] + asst[w] + accs[w] }
+      end
+    end
+
+    module GZCLIntroPlus
+      include GZCLIntro
+
+      module_function
+
+      def intensityproc(pr)
         Programs.intensityproc(Rational(825, 1000))[pr]
       end
 
-      def intensity_weeks(pr)
-        Programs.intensity_weeks(exerproc(pr), intensityproc(pr))
-      end
-
-      def bench_intensity(pr, exrx)
-        squat_intensity(pr, exrx)
+      def intensity(pr, exrx)
+        srladder = [[[1, 1, 1, 2], 3], [[2, 2, 2, 3], 2], [[3, 3, 3, 5], 1]]
+        Programs.
+          intensity_weeks(exerproc(pr), intensityproc(pr))[srladder][exrx]
       end
 
       def bench_volume(pr, exrx)
         squat_volume(pr, exrx)
       end
 
-      def deadlift_intensity(pr, exrx)
-        squat_intensity(pr, exrx)
-      end
-
       def deadlift_volume(pr, exrx)
         args = [[0, 0, 0, 10], [0, 0, 0, 2],
                 [0, 0, 0, 85], [nil, nil, nil, :T1]]
         volume_weeks(pr)[args][exrx]
-      end
-
-      def squat_intensity(pr, exrx)
-        srladder = [[[1, 1, 1, 2], 3], [[2, 2, 2, 3], 2], [[3, 3, 3, 5], 1]]
-        intensity_weeks(pr)[srladder][exrx]
       end
 
       def squat_volume(pr, exrx)
@@ -120,7 +193,7 @@ module Fortitudo
         primary    = exercises[:primary]
         exp        = exerproc(pr)
 
-        intns  = squat_intensity(pr, primary[:squat])
+        intns  = intensity(pr, primary[:squat])
         vol    = squat_volume(pr, primary[:squat])
 
         lunges = exp[assistance[:squat][0], 3,
@@ -142,7 +215,7 @@ module Fortitudo
         primary    = exercises[:primary]
         exp        = exerproc(pr)
 
-        intns   = bench_intensity(pr, primary[:bench])
+        intns   = intensity(pr, primary[:bench])
         vol     = bench_volume(pr, primary[:bench])
 
         press = exp[->(w) { assistance[:press][w % 2] },
@@ -171,7 +244,7 @@ module Fortitudo
         primary    = exercises[:primary]
         exp        = exerproc(pr)
 
-        intns   = deadlift_intensity(pr, primary[:deadlift])
+        intns   = intensity(pr, primary[:deadlift])
         vol     = deadlift_volume(pr, primary[:deadlift])
 
         fsquat = exp[assistance[:squat][1], 4, 5, ->(e, w) { pr[e, 5 * w ] }]
@@ -191,26 +264,18 @@ module Fortitudo
     end
 
     module GZCLRegular
+      include GZCLIntroPlus
+
       module_function
 
-      def bands
-        Programs.bands
-      end
-
-      def exerproc(pr)
-        Programs.exerproc(pr)
+      def intensity(pr, exrx)
+        srladder = [[[1, 1, 1, 2], 3], [[2, 2, 2, 3], 2], [[3, 3, 3, 5], 1]]
+        Programs.
+          intensity_weeks(exerproc(pr), intensityproc(pr))[srladder][exrx]
       end
 
       def intensityproc(pr)
         Programs.intensityproc(Rational(85, 100))[pr]
-      end
-
-      def intensity_weeks(pr)
-        Programs.intensity_weeks(exerproc(pr), intensityproc(pr))
-      end
-
-      def bench_intensity(pr, exrx)
-        squat_intensity(pr, exrx)
       end
 
       def bench_volume(pr, exrx)
@@ -219,29 +284,14 @@ module Fortitudo
         volume_weeks(pr)[args][exrx]
       end
 
-      def deadlift_intensity(pr, exrx)
-        squat_intensity(pr, exrx)
-      end
-
       def deadlift_volume(pr, exrx)
         args = [[0, 7, 5, 0],   [0, 3, 2, 0],
                 [0, 75, 85, 0], [nil, :T2, :T1, nil]]
         volume_weeks(pr)[args][exrx]
       end
 
-      def press_intensity(pr, exrx)
-        bench_intensity(pr, exrx)
-      end
-
       def press_volume(pr, exrx)
-        args = [[5, 4, 4, 0],      [10, 8, 8, 0],
-                [50, 60, 70, nil], [:T2, :T2, :T2, nil]]
-        volume_weeks(pr)[args][exrx]
-      end
-
-      def squat_intensity(pr, exrx)
-        srladder = [[[1, 1, 1, 2], 3], [[2, 2, 2, 3], 2], [[3, 3, 3, 5], 1]]
-        intensity_weeks(pr)[srladder][exrx]
+        squat2_volume(pr, exrx)
       end
 
       def squat_volume(pr, exrx)
@@ -250,8 +300,10 @@ module Fortitudo
         volume_weeks(pr)[args][exrx]
       end
 
-      def volume_weeks(pr)
-        Programs.volume_weeks(exerproc(pr), pr)
+      def squat2_volume(pr, exrx)
+        args = [[5, 4, 4, 0],    [10, 8, 8, 0],
+                [50, 60, 70, 0], [:T2, :T2, :T2, nil]]
+        volume_weeks(pr)[args][exrx]
       end
 
       def squat(pr, exercises)
@@ -260,7 +312,7 @@ module Fortitudo
         primary    = exercises[:primary]
         exp        = exerproc(pr)
 
-        intns  = squat_intensity(pr, primary[:squat])
+        intns  = intensity(pr, primary[:squat])
         vol    = squat_volume(pr, primary[:squat])
 
         glutes = exp[accessory[:glutes][0], 3, '12-15']
@@ -277,7 +329,7 @@ module Fortitudo
         primary    = exercises[:primary]
         exp        = exerproc(pr)
 
-        intns   = bench_intensity(pr, primary[:bench])
+        intns   = intensity(pr, primary[:bench])
         vol     = bench_volume(pr, primary[:bench])
 
         press = exp[assistance[:press][0],
@@ -303,10 +355,10 @@ module Fortitudo
         primary    = exercises[:primary]
         exp        = exerproc(pr)
 
-        intns   = deadlift_intensity(pr, primary[:deadlift])
+        intns   = intensity(pr, primary[:deadlift])
         vol     = deadlift_volume(pr, primary[:deadlift])
 
-        fsquat = exp[assistance[:squat][0], 7, 5]
+        fsquat = exp[assistance[:squat][1], 7, 5]
         pull   = exp[assistance[:pull][0],  3, 10]
         row    = exp[assistance[:row][1],   [3, 3, 4, 4], 8]
 
@@ -330,7 +382,7 @@ module Fortitudo
         primary    = exercises[:primary]
         exp        = exerproc(pr)
 
-        intns   = press_intensity(pr, primary[:press])
+        intns   = intensity(pr, primary[:press])
         vol     = press_volume(pr, primary[:press])
 
         bench = exp[assistance[:bench][0], 3, 8]
@@ -345,6 +397,29 @@ module Fortitudo
         accs    = proc do |w|
           [:T3, [delts[w], rdelts[w]]]
         end
+
+        4.times.map { |w| intns[w] + vol[w] + asst[w] + accs[w] }
+      end
+
+      def squat2(pr, exercises)
+        assistance = exercises[:assistance]
+        primary    = exercises[:primary]
+        exp        = exerproc(pr)
+
+        isq   = intensity(pr, primary[:squat])
+        isq4  = exp[primary[:squat], '10+', 3,
+                    ->(e, _w) { nearest(pr[e] * Rational(9, 10)) }]
+        intns = proc do |w|
+          (w < 3) ? isq[w] : [:T1, [isq4[w]]]
+        end
+        vol   = squat2_volume(pr, primary[:squat])
+
+        sasst = exp[->(w) { assistance[:squat][w] }, 3, 8]
+        asst  = ->(w) { (w < 2) ? [:T2, [sasst[w]]] : [] }
+
+        vpull = exp[assistance[:vpull][0], [5, 6, 7, 3],
+                    ['2-4', '2-4', '2-4', '3-6']]
+        accs  = ->(w) { [:T3, [vpull[w]]] }
 
         4.times.map { |w| intns[w] + vol[w] + asst[w] + accs[w] }
       end

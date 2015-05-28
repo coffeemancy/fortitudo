@@ -22,14 +22,16 @@ exrxs     = exermethods.
 \usepackage[a4paper, landscape, margin=0.5in]{geometry}
 
 \begin{document}
-<% 4.times.each do |week| %>
+<% 4.times.each do |week|
+     days  = exrxs.each_slice(2).count
+     linew = [1.0, 0.4, 0.33, 0.4, 0.33][days-1] || 0.33 %>
 \begin{table}[!htb]
 \caption*{\textbf{<%= program_name %>-- week <%= week+1 %>}}
 \centering
 <% exrxs.each_slice(2).each_with_index do |(exrxkey, workweek), day|
      work    = workweek[week]
      exrx    = exermap[:primary][exrxkey] %>
-\begin{minipage}[t]{0.33\linewidth}
+\begin{minipage}[t]{<%= linew %>\linewidth}
 \begin{tabular}[t]{c|c|c|l}
 \hline
 \multicolumn{4}{c}{

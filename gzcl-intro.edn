@@ -1,0 +1,48 @@
+{:exercises
+ ;; exercises in 'typical' ranges,
+ ;; e.g. 1, 5, 8-12, 15-30, depending on exercise
+ {"band chin-ups"                   :B
+  "band pull-ups"                   :G
+  "band face pulls"                 :R
+  "band push downs"                 :R
+  "db rows"                         48
+  "front squats"                    155
+  "high-bar rear lunge"             115
+  "hammer curls"                    [18 :ea]
+  "leg extensions"                  45
+  "low-bar squats"                  360
+  "lying leg curls"                 30
+  "pause bench press"               200
+  "push-ups"                        "BW"
+  "snatch-grip BTN press"           85
+  "sumo deadlifts"                  395}
+
+ :exermap
+ ;; exercise mappings
+ {:primary
+  {:bench     "pause bench press"
+   :deadlift  "sumo deadlifts"
+   :squat     "low-bar squats"}
+  :assistance
+  {:press  ["snatch-grip BTN press"]
+   :push   ["push-ups"]
+   :row    ["db rows"]
+   :squat  ["high-bar rear lunge"
+            "front squats"]
+   :vpull  ["band pull-ups",
+            "band chin-ups"]}
+  :accessory
+  {:biceps   ["hammer curls"]
+   :hams     ["lying leg curls"]
+   :quads    ["leg extensions"]
+   :rdelts   ["band face pulls"]
+   :triceps  ["band push downs"]}}
+
+ :exermethods
+ ;; map primary exercise to method to call
+ [[:squat    :squat]
+  [:bench    :bench]
+  [:deadlift :deadlift]]
+
+ :program_module "GZCLIntro"
+ :program_name   "GZCL Intro"}
