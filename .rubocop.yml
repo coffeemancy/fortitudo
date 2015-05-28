@@ -1,0 +1,18 @@
+---
+DotPosition:
+  EnforcedStyle: trailing
+HashSyntax:
+  EnforcedStyle: hash_rockets
+MethodLength:
+  Max: 30
+PercentLiteralDelimiters:
+  PreferredDelimiters:
+    '%':  '{}'
+    '%i': '{}'
+    '%q': '{}'
+    '%Q': '{}'
+    '%r': '{}'
+    '%s': '{}'
+    '%w': '{}'
+    '%W': '{}'
+    '%x': '{}'
