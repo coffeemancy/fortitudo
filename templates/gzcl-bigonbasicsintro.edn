@@ -1,0 +1,62 @@
+{:exercises
+ ;; exercises in 'typical' ranges,
+ ;; e.g. 1, 5, 8-12, 15-30, depending on exercise
+ {"band chin-ups"                   :B
+  "band face pulls"                 :B
+  "band good mornings"              :G
+  "band push downs"                 :B
+  "bent-over row"                   155
+  "chest flyes"                     [28 :ea]
+  "close-grip bench press"          135
+  "db rows"                         58
+  "front squats"                    195
+  "good mornings"                   65
+  "hammer curls"                    [23 :ea]
+  "inverted rows"                   :BW
+  "lateral raises"                  [28 :ea]
+  "leg extensions"                  35
+  "low-bar squats"                  360
+  "lying leg curls"                 38
+  "overhead press"                  145
+  "pause bench press"               200
+  "rto iso dip holds"               :B
+  "snatch-grip BTN press"           90
+  "stiff-leg deadlift"              205
+  "deadlifts"                       395}
+
+ :exermap
+ ;; exercise mappings
+ {:primary
+  {:bench     "pause bench press"
+   :deadlift  "deadlifts"
+   :press     "overhead press"
+   :squat     "low-bar squats"}
+  :assistance
+  {:bench     ["close-grip bench press"]
+   :press     ["snatch-grip BTN press"]
+   :pull      ["stiff-leg deadlift"]
+   :row       ["db rows"
+               "bent-over row"]
+   :squat     ["high-bar rear lunge"
+               "front squats"]
+   :vpull     ["band chin-ups",
+               "inverted rows"]}
+  :accessory
+  {:biceps   ["hammer curls"]
+   :chest    ["rto iso dip holds"]
+   :delts    ["lateral raises"]
+   :glutes   ["good mornings"]
+   :hams     ["lying leg curls"]
+   :quads    ["leg extensions"]
+   :rdelts   ["band face pulls"]
+   :triceps  ["band push downs"]}}
+
+ :exermethods
+ ;; map primary exercise to method to call
+ [[:monday    :squat    :squat]
+  [:tuesday   :bench    :bench]
+  [:thursday  :deadlift :deadlift]
+  [:friday    :press    :press]]
+
+ :program_module "GZCLBigOnBasicsIntro"
+ :program_name   "GZCL Big on Basics Intro"}

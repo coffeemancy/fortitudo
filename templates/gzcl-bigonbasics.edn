@@ -1,0 +1,62 @@
+{:exercises
+ ;; exercises in 'typical' ranges,
+ ;; e.g. 1, 5, 8-12, 15-30, depending on exercise
+ {"band chin-ups"                   :B
+  "band face pulls"                 :B
+  "band push downs"                 :B
+  "bent-over row"                   155
+  "chest flyes"                     [28 :ea]
+  "close-grip bench press"          115
+  "db rows"                         63
+  "front squats"                    235
+  "high-bar rear lunge"             125
+  "good mornings"                   95
+  "hammer curls"                    [23 :ea]
+  "high-bar rear lunge"             125
+  "lateral raises"                  [28 :ea]
+  "leg extensions"                  45
+  "low-bar squats"                  360
+  "lying leg curls"                 40
+  "overhead press"                  135
+  "pause bench press"               200
+  "snatch-grip BTN press"           90
+  "stiff-leg deadlift"              195
+  "sumo deadlifts"                  395}
+
+ :exermap
+ ;; exercise mappings
+ {:primary
+  {:bench       "pause bench press"
+   :deadlift    "sumo deadlifts"
+   :front_squat "front squats"
+   :press       "overhead press"
+   :squat       "low-bar squats"}
+  :assistance
+  {:bench     ["close-grip bench press"]
+   :press     ["snatch-grip BTN press"]
+   :pull      ["stiff-leg deadlift"]
+   :row       ["db rows"
+               "bent-over row"]
+   :squat     ["high-bar rear lunge"
+               "pause low-bar squats"]
+   :vpull     ["band chin-ups"]}
+  :accessory
+  {:biceps   ["hammer curls"]
+   :chest    ["chest flyes"]
+   :delts    ["lateral raises"]
+   :glutes   ["good mornings"]
+   :hams     ["lying leg curls"]
+   :quads    ["leg extensions"]
+   :rdelts   ["band face pulls"]
+   :triceps  ["band push downs"]}}
+
+ :exermethods
+ ;; map primary exercise to method to call
+ [[:monday    :squat       :squat]
+  [:tuesday   :bench       :bench]
+  [:wednesday :deadlift    :deadlift]
+  [:thursday  :press       :press]
+  [:friday    :front_squat :front_squat]]
+
+ :program_module "GZCLBigOnBasics"
+ :program_name   "GZCL Big on Basics"}

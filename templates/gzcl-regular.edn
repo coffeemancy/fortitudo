@@ -49,11 +49,11 @@
 
  :exermethods
  ;; map primary exercise to method to call
- [[:squat    :squat]
-  [:bench    :bench]
-  [:deadlift :deadlift]
-  ;[:press    :press]
-  [:squat    :squat2]]
+ [[:monday    :squat    :squat]
+  [:tuesday   :bench    :bench]
+  [:wednesday :deadlift :deadlift]
+  ;[:friday    :press    :press]
+  [:friday    :squat    :squat2]]
 
  :program_module "GZCLRegular"
  :program_name   "GZCL Regular"}

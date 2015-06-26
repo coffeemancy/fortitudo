@@ -6,7 +6,9 @@ extend program_module
 
 pr        = prproc(exercises, bands)
 exrxs     = exermethods.
-  flat_map { |exrx, meth| [exrx, send(meth, pr, exermap)] } %>
+  flat_map do |day, exrx, meth|
+    [day.to_s, exrx, send(meth, pr, exermap)]
+  end %>
 \renewcommand{\ttdefault}{cmtt}
 \usepackage[T1]{fontenc}
 \usepackage[latin9]{inputenc}
@@ -23,19 +25,19 @@ exrxs     = exermethods.
 
 \begin{document}
 <% 4.times.each do |week|
-     days  = exrxs.each_slice(2).count
+     days  = exrxs.each_slice(3).count
      linew = [1.0, 0.4, 0.33, 0.4, 0.33][days-1] || 0.33 %>
 \begin{table}[!htb]
 \caption*{\textbf{<%= program_name %>-- week <%= week+1 %>}}
 \centering
-<% exrxs.each_slice(2).each_with_index do |(exrxkey, workweek), day|
+<% exrxs.each_slice(3).each do |day, exrxkey, workweek|
      work    = workweek[week]
      exrx    = exermap[:primary][exrxkey] %>
 \begin{minipage}[t]{<%= linew %>\linewidth}
 \begin{tabular}[t]{c|c|c|l}
 \hline
 \multicolumn{4}{c}{
-\textbf{day <%= day+1 %> -- <%= exrx %>}}\tabularnewline
+\textbf{<%= day %> -- <%= exrx %>}}\tabularnewline
 \hline
 \hline
 <% no_mod = 1
