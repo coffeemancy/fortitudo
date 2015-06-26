@@ -1,6 +1,8 @@
 # encoding: UTF-8
 source 'http://rubygems.org'
 
+gemspec
+
 gem 'edn', '~> 1.0'
 gem 'erubis', '~> 2.7'
 

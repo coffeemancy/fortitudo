@@ -57,3 +57,14 @@ test/reek: bundle
 # run rubocop from `rake` task
 test/rubocop: bundle
 	bundle exec rake style:rubocop
+
+### Build
+#
+
+build: build/pdf
+
+build/pdf: bundle
+	for edn in `ls *.edn`; do \
+		bundle exec ./fortitudo.rb -c $$edn | pdflatex && \
+		mv texput.pdf `echo $$edn | sed -e 's/.edn//'`.pdf; \
+	done
