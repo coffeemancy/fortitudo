@@ -64,7 +64,7 @@ test/rubocop: bundle
 build: build/pdf
 
 build/pdf: bundle
-	for edn in `ls *.edn`; do \
-		bundle exec ./fortitudo.rb -c $$edn | pdflatex && \
-		mv texput.pdf `echo $$edn | sed -e 's/.edn//'`.pdf; \
+	for edn in `ls templates/*.edn | sed -e 's/templates\///g'`; do \
+		bundle exec ./bin/fortitudo.rb -c templates/$$edn | pdflatex && \
+		mv texput.pdf `echo pdf/$$edn | sed -e 's/.edn//'`.pdf; \
 	done
