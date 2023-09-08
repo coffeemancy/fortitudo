@@ -1,6 +1,6 @@
 # fortitudo
 
-Crazy tool for Spreadsheet Warriors to generate Strength Training programs using edn data, embedded ruby (erubis) templates, and a bit of LaTex.
+Fun tool for Spreadsheet Warriors to generate Strength Training programs using edn data, embedded ruby (erubis) templates, and a bit of LaTex.
 
 ## examples
 
@@ -28,4 +28,4 @@ Generate a PDF (assuming a working LaTeX environment):
 
 ## et ceteras
 
-♡ 2015 by Carlton Stedman. Copying art is an act of love. Please copy.
+♡ 2015. Copying art is an act of love. Please copy.
